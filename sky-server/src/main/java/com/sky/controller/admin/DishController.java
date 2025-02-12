@@ -86,8 +86,20 @@ public class DishController {
     @PutMapping
     @ApiOperation("update dish information")
     public Result update(@RequestBody DishDTO dishDTO) {
-        Dish dish = new Dish();
         dishService.updateWithFlavor(dishDTO);
+        return Result.success();
+    }
+
+    /**
+     * set dish status
+     * @param id
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("set dish status")
+    public Result setStatus(@PathVariable Integer status, @RequestParam Long id) {
+        dishService.setStatus(status, id);
         return Result.success();
     }
 }
