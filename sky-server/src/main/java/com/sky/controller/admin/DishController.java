@@ -102,4 +102,16 @@ public class DishController {
         dishService.setStatus(status, id);
         return Result.success();
     }
+
+    /**
+     * query dish by categoryId
+     * @param categoryId
+     * @return
+     */
+    @GetMapping("/list")
+    @ApiOperation("query dish by categoryId")
+    public Result<List<Dish>> queryByCategoryId(@RequestParam Long categoryId) {
+        List<Dish> dishs = dishService.queryWithCategory(categoryId);
+        return Result.success(dishs);
+    }
 }

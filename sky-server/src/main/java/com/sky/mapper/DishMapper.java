@@ -16,7 +16,7 @@ import java.util.List;
 public interface DishMapper {
 
     /**
-     * 根据分类id查询菜品数量
+     * count dishes by category id
      * @param categoryId
      * @return
      */
@@ -57,4 +57,11 @@ public interface DishMapper {
      */
     @AutoFill(value = OperationType.UPDATE)
     void update(Dish dish);
+
+    /**
+     * query dish by categoryId
+     * @param dish
+     * @return
+     */
+    List<Dish> listDish(Dish dish);
 }
