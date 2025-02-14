@@ -29,4 +29,10 @@ public interface SetmealDishMapper {
      */
     @Select("select count(id) from setmeal where category_id = #{categoryId}")
     Integer countByCategoryId(Long id);
+
+    /**
+     * delete setmeal in batches
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }
