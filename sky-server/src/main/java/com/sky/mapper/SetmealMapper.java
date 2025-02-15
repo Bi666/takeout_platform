@@ -49,4 +49,5 @@ public interface SetmealMapper {
      * @param ids
      */
     void deleteBatch(List<Long> ids);
+
 }

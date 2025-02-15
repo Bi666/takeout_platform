@@ -1,5 +1,6 @@
 package com.sky.mapper;
 
+import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,7 +24,7 @@ public interface SetmealDishMapper {
     List<Long> getSetmealIdsByDishId(List<Long> dishIds);
 
     /**
-     * 根据分类id查询套餐的数量
+     * count setmeals by category id
      * @param id
      * @return
      */
@@ -35,4 +36,12 @@ public interface SetmealDishMapper {
      * @param ids
      */
     void deleteBatch(List<Long> ids);
+
+    /**
+     * get dishes by setmeal id
+     * @param id
+     * @return
+     */
+    @Select("select * from setmeal_dish where setmeal_id = #{id}")
+    List<SetmealDish> getDishesBySetmealID(Long id);
 }

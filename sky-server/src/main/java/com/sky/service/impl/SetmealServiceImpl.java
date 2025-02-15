@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.ContentHandler;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,5 +81,45 @@ public class SetmealServiceImpl implements SetmealService {
 
         //删除setmeal_dish表
         setmealDishMapper.deleteBatch(ids);
+    }
+
+    /**
+     * query setmeal by id
+     * @param id
+     */
+    public SetmealVO getSetmealById(Long id) {
+        Setmeal setmeal = setmealMapper.getById(id);
+
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(setmealDishMapper.getDishesBySetmealID(id));
+        return setmealVO;
+    }
+
+    /**
+     * edit information of setmeal
+     * @param setmealDTO
+     */
+    @Transactional
+    public void editSetmeal(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+
+        //修改setmeal表
+        setmealMapper.update(setmeal);
+
+        //修改setmeal_dish表
+        //删除原来的关系数据
+        Long setmealId = setmealDTO.getId();
+        List<Long> ids = new ArrayList<>();
+        ids.add(setmealId);
+        setmealDishMapper.deleteBatch(ids);
+
+        //添加新的关系数据
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        setmealDishes.forEach(setmealDish -> {
+            setmealDish.setSetmealId(setmealId);
+        });
+        setmealDishMapper.insertBatch(setmealDishes);
     }
 }
