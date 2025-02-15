@@ -6,7 +6,6 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -64,4 +63,12 @@ public interface DishMapper {
      * @return
      */
     List<Dish> listDish(Dish dish);
+
+    /**
+     * get dishes by setmeal id
+     * @param setmeal_id
+     * @return
+     */
+    @Select("select * from dish d left join setmeal_dish s on d.id = s.dish_id where s.setmeal_id = #{setmeal_id}")
+    List<Dish> getBySetmealId(Long setmeal_id);
 }

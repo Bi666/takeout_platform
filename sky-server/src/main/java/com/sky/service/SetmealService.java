@@ -41,4 +41,11 @@ public interface SetmealService {
      * @return
      */
     SetmealVO getSetmealById(Long id);
+
+    /**
+     * start or stop a setmeal
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }
