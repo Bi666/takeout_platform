@@ -11,3 +11,10 @@ sky:
     access-key-id: LTAI5tQw72XdMgMqnaD6KHsT
     access-key-secret: tHJgbvuWE2SeWILzHivx83qfP1AYDc
     bucket-name: takeo-test
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  wechat:
+    appid: wxe39916182e36454b
+    secret: bf5601b8f8398fa776511c4103b2547b
