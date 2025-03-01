@@ -54,4 +54,11 @@ public interface DishService {
      * @return
      */
     List<Dish> queryWithCategory(Long categoryId);
+
+    /**
+     * query dish and flavor
+     * @param dish
+     * @return
+     */
+    List<DishVO> listWithFlavor(Dish dish);
 }
