@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sky.entity.Orders.CANCELLED;
 
@@ -226,4 +227,29 @@ public class OrderServiceImpl implements OrderService {
         }
         orderMapper.update(newOrder);
     }
+
+    /**
+     * repeat order
+     * @param id
+     */
+    public void repetition(Long id) {
+        // 根据id查询到原来订单中的菜品信息
+        List<OrderDetail> orderDetailList = orderDetailMapper.getDetailByOrder(id);
+
+        // 查询当前用户id
+        Long userId = BaseContext.getCurrentId();
+
+        // 使用 Stream API 将 OrderDetail 转换为 ShoppingCart
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            BeanUtils.copyProperties(x, shoppingCart, "id"); // 复制属性，但忽略 id
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            return shoppingCart;
+        }).collect(Collectors.toList()); // 收集到 List
+
+        // 批量插入购物车
+        shoppingCartMapper.insertBatch(shoppingCartList);
+    }
+
 }
