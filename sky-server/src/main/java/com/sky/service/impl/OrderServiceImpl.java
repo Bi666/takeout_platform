@@ -29,6 +29,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sky.entity.Orders.CANCELLED;
+
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
@@ -195,5 +197,33 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orders, orderVO);
         orderVO.setOrderDetailList(orderDetailMapper.getDetailByOrder(orderId));
         return orderVO;
+    }
+
+    /**
+     * cancel order by id
+     * @param orderId
+     */
+    public void cancelOrder(Long orderId){
+        Orders orders = orderMapper.getById(orderId);
+        // 订单是否存在
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+        if (orders.getStatus() >= 3) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders newOrder = new Orders();
+        newOrder.setId(orderId);
+        newOrder.setStatus(CANCELLED);
+        newOrder.setCancelReason("User cancel this order");
+        newOrder.setOrderTime(LocalDateTime.now());
+        if (orders.getPayStatus() == Orders.PAID) {
+            //退款
+            newOrder.setPayStatus(Orders.REFUND);
+        }
+        orderMapper.update(newOrder);
     }
 }

@@ -44,4 +44,10 @@ public interface OrderService {
      * @return
      */
     OrderVO getOrderById(Long orderId);
+
+    /**
+     * cancel order by id
+     * @param orderId
+     */
+    void cancelOrder(Long orderId);
 }

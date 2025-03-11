@@ -74,9 +74,21 @@ public class OrderController {
      * @param orderId
      * @return
      */
-    @GetMapping("orderDetail/{id}")
+    @GetMapping("/orderDetail/{id}")
     @ApiOperation("view order detail")
     public Result<OrderVO> getOrderDetail(@PathVariable("id") Long orderId) {
         return Result.success(orderService.getOrderById(orderId));
+    }
+
+    /**
+     * cancel order
+     * @param orderId
+     * @return
+     */
+    @PutMapping("/cancel/{id}")
+    @ApiOperation("cancel order")
+    public Result cancel(@PathVariable("id") Long orderId) {
+        orderService.cancelOrder(orderId);
+        return Result.success();
     }
 }
