@@ -1,17 +1,22 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +78,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setConsignee(addressBook.getConsignee());
         orders.setOrderTime(LocalDateTime.now());
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
+        orders.setAddress(addressBook.getProvinceName()+addressBook.getCityName()+addressBook.getDistrictName()+addressBook.getDetail());
         orderMapper.insert(orders);
 
         //向order detail里插入n条数据
@@ -114,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
 //                "take out order", //商品描述
 //                user.getOpenid() //微信用户的openid
 //        );
-//
 //        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
 //            throw new OrderBusinessException("Order has been paid");
 //        }
@@ -156,5 +161,39 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    /**
+     * query history orders
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    public PageResult queryHistory(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        Page<OrderVO> page = orderMapper.queryHistory(ordersPageQueryDTO);
+
+        //查询order detail并且存入orderVO
+        List<OrderVO> orderVOList = new ArrayList<>();
+        if (page != null || page.getTotal() > 0) {
+            for (OrderVO orderVO : page) {
+                List<OrderDetail> orderDetailList = orderDetailMapper.getDetailByOrder(orderVO.getId());
+                orderVO.setOrderDetailList(orderDetailList);
+                orderVOList.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(), orderVOList);
+    }
+
+    /**
+     * get order detail by order id
+     * @param orderId
+     * @return
+     */
+    public OrderVO getOrderById(Long orderId){
+        Orders orders = orderMapper.getById(orderId);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        orderVO.setOrderDetailList(orderDetailMapper.getDetailByOrder(orderId));
+        return orderVO;
     }
 }
