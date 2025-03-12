@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper
 public interface OrderMapper {
@@ -57,4 +58,11 @@ public interface OrderMapper {
      * @return
      */
     Page<OrderVO> queryHistory(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * search order with condition
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    List<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }

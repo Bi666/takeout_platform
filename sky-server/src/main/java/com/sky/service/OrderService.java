@@ -9,6 +9,8 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 
+import java.util.List;
+
 public interface OrderService {
 
     /**
@@ -56,4 +58,11 @@ public interface OrderService {
      * @param id
      */
     void repetition(Long id);
+
+    /**
+     * search order with condition
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }
