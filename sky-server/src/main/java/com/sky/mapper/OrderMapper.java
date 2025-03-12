@@ -65,4 +65,11 @@ public interface OrderMapper {
      * @return
      */
     List<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * count confirmed order
+     * @return
+     */
+    @Select("select count(id) from orders where status = #{status}")
+    Integer countStatus(Integer status);
 }
