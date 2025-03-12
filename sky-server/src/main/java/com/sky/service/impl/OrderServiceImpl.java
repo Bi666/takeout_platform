@@ -26,9 +26,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.sky.entity.Orders.CANCELLED;
+import static com.sky.entity.Orders.PAID;
 
 @Service
 @Slf4j
@@ -270,7 +272,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * Count orders
+     * Order quantity statistics
      * @return
      */
     public OrderStatisticsVO statistics() {
@@ -279,5 +281,91 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setToBeConfirmed(orderMapper.countStatus(Orders.TO_BE_CONFIRMED));
         orderStatisticsVO.setDeliveryInProgress(orderMapper.countStatus(Orders.DELIVERY_IN_PROGRESS));
         return orderStatisticsVO;
+    }
+
+    /**
+     * Confirm order
+     * @param id
+     */
+    public void confirmOrder(Long id) {
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.CONFIRMED)
+                .build();
+        orderMapper.update(orders);
+    }
+
+    /**
+     * Reject order
+     * @param id
+     * @param rejectionReason
+     */
+    public void RejectOrder(Long id, String rejectionReason) {
+        Orders orders = orderMapper.getById(id);
+        //只有TO_BE_CONFIRMED可以Reject
+        if (orders == null || !Objects.equals(orders.getStatus(), Orders.TO_BE_CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        //已支付需要REFUND
+        Orders newOrder = new Orders();
+        newOrder.setId(id);
+        if (Objects.equals(orders.getPayStatus(), PAID)) {
+            log.info("Reject order and refund pay: {}", id);
+            newOrder.setPayStatus(Orders.REFUND);
+        }
+        newOrder.setStatus(Orders.CANCELLED);
+        newOrder.setRejectionReason(rejectionReason);
+        orderMapper.update(newOrder);
+    }
+
+    /**
+     * Cancel order
+     * @param id
+     * @param cancelReason
+     */
+    public void CancelOrder(Long id, String cancelReason) {
+        Orders orders = orderMapper.getById(id);
+        //已支付需要REFUND
+        Orders newOrder = new Orders();
+        newOrder.setId(id);
+        if (Objects.equals(orders.getPayStatus(), PAID)) {
+            log.info("Cancel order and refund pay: {}", id);
+            newOrder.setPayStatus(Orders.REFUND);
+        }
+        newOrder.setStatus(Orders.CANCELLED);
+        newOrder.setCancelReason(cancelReason);
+        newOrder.setCancelTime(LocalDateTime.now());
+        orderMapper.update(newOrder);
+    }
+
+    /**
+     * Delivery order
+     * @param id
+     */
+    public void deliveryOrder(Long id) {
+        Orders orders = orderMapper.getById(id);
+        if (orders == null || !Objects.equals(orders.getStatus(), Orders.CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders newOrder = new Orders();
+        newOrder.setId(id);
+        newOrder.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(newOrder);
+    }
+
+    /**
+     * Complete order
+     * @param id
+     */
+    public void completeOrder(Long id) {
+        Orders orders = orderMapper.getById(id);
+        if (orders == null || !Objects.equals(orders.getStatus(), Orders.DELIVERY_IN_PROGRESS)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders newOrder = new Orders();
+        newOrder.setId(id);
+        newOrder.setStatus(Orders.COMPLETED);
+        newOrder.setDeliveryTime(LocalDateTime.now());
+        orderMapper.update(newOrder);
     }
 }

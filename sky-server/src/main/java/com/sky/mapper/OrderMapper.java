@@ -67,7 +67,7 @@ public interface OrderMapper {
     List<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
-     * count confirmed order
+     * Order quantity statistics
      * @return
      */
     @Select("select count(id) from orders where status = #{status}")

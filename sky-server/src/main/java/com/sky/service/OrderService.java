@@ -65,8 +65,40 @@ public interface OrderService {
     PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
-     * Count orders
+     * Order quantity statistics
      * @return
      */
     OrderStatisticsVO statistics();
+
+    /**
+     * Confirm order
+     * @param id
+     */
+    void confirmOrder(Long id);
+
+    /**
+     * Reject order
+     * @param id
+     * @param rejectionReason
+     */
+    void RejectOrder(Long id, String rejectionReason);
+
+    /**
+     * Cancel order
+     * @param id
+     * @param cancelReason
+     */
+    void CancelOrder(Long id, String cancelReason);
+
+    /**
+     * Delivery order
+     * @param id
+     */
+    void deliveryOrder(Long id);
+
+    /**
+     * Complete order
+     * @param id
+     */
+    void completeOrder(Long id);
 }

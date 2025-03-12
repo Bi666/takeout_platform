@@ -1,9 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -40,13 +38,88 @@ public class OrderController {
     }
 
     /**
-     * Count orders
+     * Order quantity statistics
      * @return
      */
     @GetMapping("/statistics")
-    @ApiOperation("Count orders")
+    @ApiOperation("Order quantity statistics")
     public Result<OrderStatisticsVO> statistics() {
         OrderStatisticsVO orderStatisticsVO = orderService.statistics();
         return Result.success(orderStatisticsVO);
+    }
+
+    /**
+     * Search for detail of order
+     * @return
+     */
+    @GetMapping("/details/{id}")
+    @ApiOperation("Search for detail of order")
+    public Result<OrderVO> queryDetail(@PathVariable Long id) {
+        return Result.success(orderService.getOrderById(id));
+    }
+
+    /**
+     * Confirm order
+     * @param id
+     * @return
+     */
+    @PutMapping("/confirm")
+    @ApiOperation("Confirm order")
+    public Result confirmOrder(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
+        Long id = ordersConfirmDTO.getId();
+        orderService.confirmOrder(id);
+        return Result.success();
+    }
+
+    /**
+     * Reject order
+     * @param ordersRejectionDTO
+     * @return
+     */
+    @PutMapping("/rejection")
+    @ApiOperation("Reject order")
+    public Result RejectOrder(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
+        Long id = ordersRejectionDTO.getId();
+        String rejectionReason = ordersRejectionDTO.getRejectionReason();
+        orderService.RejectOrder(id, rejectionReason);
+        return Result.success();
+    }
+
+    /**
+     * Cancel order
+     * @param ordersCancelDTO
+     * @return
+     */
+    @PutMapping("/cancel")
+    @ApiOperation("Cancel order")
+    public Result CancelOrder(@RequestBody OrdersCancelDTO ordersCancelDTO) {
+        Long id = ordersCancelDTO.getId();
+        String cancelReason = ordersCancelDTO.getCancelReason();
+        orderService.CancelOrder(id, cancelReason);
+        return Result.success();
+    }
+
+    /**
+     * Delivery order
+     * @param id
+     * @return
+     */
+    @PutMapping("/delivery/{id}")
+    @ApiOperation("Delivery order")
+    public Result delivery(@PathVariable Long id) {
+        orderService.deliveryOrder(id);
+        return Result.success();
+    }
+
+    /**
+     * Complete order
+     * @param id
+     * @return
+     */
+    @PutMapping("/complete/{id}")
+    @ApiOperation("Complete order")
+    public Result completeOrder(@PathVariable Long id) {
+        orderService.completeOrder(id);
+        return Result.success();
     }
 }
