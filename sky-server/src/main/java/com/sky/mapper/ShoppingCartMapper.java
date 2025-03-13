@@ -34,6 +34,12 @@ public interface ShoppingCartMapper {
     void insert(ShoppingCart shoppingCart);
 
     /**
+     * insert shopping car in batch
+     * @param shoppingCartList
+     */
+    void insertBatch(List<ShoppingCart> shoppingCartList);
+
+    /**
      * delete cart by user id
      * @param userId
      */
