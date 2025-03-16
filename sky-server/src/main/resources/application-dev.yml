@@ -18,3 +18,4 @@ sky:
   wechat:
     appid: wxe39916182e36454b
     secret: bf5601b8f8398fa776511c4103b2547b
+    notifyUrl:
