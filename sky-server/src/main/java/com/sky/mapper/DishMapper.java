@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DishMapper {
@@ -71,4 +72,11 @@ public interface DishMapper {
      */
     @Select("select * from dish d left join setmeal_dish s on d.id = s.dish_id where s.setmeal_id = #{setmeal_id}")
     List<Dish> getBySetmealId(Long setmeal_id);
+
+    /**
+     * Count dishes number with conditions
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }
