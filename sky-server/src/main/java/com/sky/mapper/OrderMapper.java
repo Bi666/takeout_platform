@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -82,4 +83,12 @@ public interface OrderMapper {
      */
     @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
     List<Orders> getByStatus(Integer status, LocalDateTime orderTime);
+
+
+    /**
+     * Sum turnover by begin & end & status
+     * @param map
+     * @return
+     */
+    Double sumByMap(Map map);
 }
