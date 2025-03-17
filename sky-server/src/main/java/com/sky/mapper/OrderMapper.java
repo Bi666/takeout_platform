@@ -91,4 +91,10 @@ public interface OrderMapper {
      * @return
      */
     Double sumByMap(Map map);
+
+    /**
+     * Count order number by begin & end & status(?)
+     * @param map
+     */
+    Integer countByMap(Map map);
 }
